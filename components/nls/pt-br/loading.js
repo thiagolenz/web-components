@@ -1,0 +1,5 @@
+define({
+	loading: {
+		wait : "Aguarde..."
+	} 
+});
