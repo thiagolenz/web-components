@@ -1,4 +1,4 @@
-define(["loadingMessages"],function (loading){
+define(["components/LoadingMessages"],function (loading){
 
 	function post (req) {		
 		req.type = "POST";
@@ -23,9 +23,10 @@ define(["loadingMessages"],function (loading){
 	}
 
 	function doAjax (req) {
-		loading.loading({
-			inModal:req.inModal
-		});
+		if (!req.skipLoading)
+			loading.loading({
+				inModal:req.inModal
+			});
 		$.ajax({
 			url: "rest/"+ req.url,
 			type : req.type,

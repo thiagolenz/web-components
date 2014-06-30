@@ -1,5 +1,9 @@
-define(["service", "dialog", "messages", "i18n!components/nls/generic"], 
-function (service, dialog, messages, i18n_g){
+define(["components/Service", 
+        "components/Dialog", 
+        "components/Messages", 
+        "i18n!components/nls/Generic", 
+        "components/FieldsValidation"], 
+function (service, dialog, messages, i18n_g, fieldsValidation){
 	
 	function open (config) {
 		config.caller.onModalConfirm = onModalConfirm;
@@ -12,13 +16,27 @@ function (service, dialog, messages, i18n_g){
 			inModal: true
 		});
 		var obj = config.caller.prepareObjToSave();
+		
+		fieldsValidation.validateMandatory ({
+			bean : obj,
+			source : config.source,
+			inModal : true,
+			container : dialog.idContainer, 
+			success : function() {
+				submitSave(config, obj);
+			}
+		});
+		
+	}
+	
+	function submitSave (config, obj) {
 		var requestConfig = {
 				url: config.restUrl,
 				data: obj,
 				inModal: true,
 				id : config.id,
-				success: function () {
-					onSuccess(config);
+				success: function (data) {
+					onSuccess(config, data);
 				},
 				error: onError
 		};
@@ -28,7 +46,9 @@ function (service, dialog, messages, i18n_g){
 			service.post(requestConfig);
 	}
 	
-	function onSuccess (config) {
+	function onSuccess (config, data) {
+		if (config.afterSuccess)
+			config.afterSuccess(data);
 		dialog.close();
 		messages.success ( {
 			title: i18n_g.congrats,

@@ -1,4 +1,4 @@
-define(function () {
+define([], function () {
 	function warning (options) {
 		clear(options);
 		message(options, "alert-warning");
@@ -40,6 +40,8 @@ define(function () {
 	}
 
 	function clear (options) {
+		if (!options)
+			options = {};
 		defineContainer(options);
 		$("#"+options.container).empty();
 	}

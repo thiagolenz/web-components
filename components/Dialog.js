@@ -1,4 +1,6 @@
-define(["service", "htmlLoader"], function (service, htmlLoader){
+define(["components/Service", 
+        "components/HtmlLoader"], 
+function (service, htmlLoader){
 	var config = null;
 
 	function open (_config) {
@@ -7,9 +9,8 @@ define(["service", "htmlLoader"], function (service, htmlLoader){
 	}
 
 	function loadModalContainer () {
-		var idContainer = "dialogContainer";
 		var modalContainer = document.createElement("div");
-		modalContainer.id = idContainer;
+		modalContainer.id = _this.idContainer;
 		$("body").append(modalContainer);
 		
 		htmlLoader.load ({
@@ -35,9 +36,20 @@ define(["service", "htmlLoader"], function (service, htmlLoader){
 	function onLoadFinish () {
 		config.caller.afterLoadContent ();
 		bindEvents();
+		if (config.large)
+			$(".modal-dialog").addClass("modal-lg");
+		else if (config.small)
+			$(".modal-dialog").addClass("modal-sm");
 		$("#myModal").modal({
 			backdrop: "static"
 		});		
+		$('#myModal').on('hidden.bs.modal', function (e) {
+			 if (config.onHideModal)
+				 config.onHideModal();
+			 else
+				 console.log('hideeeeee');
+		});
+		$($("#dialogContainer input")[0]).focus();
 	}
 
 	function bindEvents () {
@@ -62,10 +74,13 @@ define(["service", "htmlLoader"], function (service, htmlLoader){
 		if (config.caller.onCloseModal)
 			config.caller.onCloseModal();
 	}
-
-	return {
+	
+	var _this = {
 		open : open,
-		close: close
+		close: close,
+		idContainer : "dialogContainer"
 	};
+	
+	return _this;
 
 });

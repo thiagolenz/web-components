@@ -1,12 +1,14 @@
-define(["i18n!components/nls/generic"], function (i18n_g){
+define(["i18n!components/nls/Generic"], 
+function (i18n_g){
 
 	function load (options, callback) {
 		$(options.container).load(options.file, function () {
 			mergeTranslate(options);
 			translateElements(options);
 			translatePlaceholders(options);
+			translateMixElements(options);
 			if (callback)
-				callback();
+				callback(options);
 		});
 	}
 	
@@ -24,6 +26,27 @@ define(["i18n!components/nls/generic"], function (i18n_g){
 		return $.extend(destiny, obj2);
 	}
 	
+	function translateMixElements (options) {
+		var elements = $(options.container + " .translate-mix");
+		for (var i = 0; i < elements.length; i++) {
+			var element= $(elements[i]);
+			var html = $(element).html();
+			var index = html.indexOf('}') +1;
+			var content = html.substring(0, index);
+			var restHtml = html.substring(index, html.length);
+			content = getTranslatePath(content);
+			var parts = content.split(".");
+			translateMixElement(options, element, parts, content, restHtml);
+		}
+	}
+	
+	
+	function translateMixElement (options, element, parts, content, extraHtml) {
+		var value = findValueOf(options, parts, content);
+		if (value != undefined) 
+			element.html(value + extraHtml);
+	}
+	
 	function translateElements (options) {
 		var elements = $(options.container + " *:contains('${'):not(:has(*))");
 		for (var i = 0; i < elements.length; i++) {
@@ -36,7 +59,12 @@ define(["i18n!components/nls/generic"], function (i18n_g){
 	}
 	
 	function translatePlaceholders (options) {
-		var elements = $(options.container + " input[placeholder^='${']");		
+		translatePlaceholderBySelection(options, " input[placeholder^='${']");
+		translatePlaceholderBySelection(options, " textarea[placeholder^='${']");
+	}
+	
+	function translatePlaceholderBySelection (options, selection) {
+		var elements = $(options.container + selection);
 		for (var i = 0; i < elements.length; i++) {
 			var element= $(elements[i]);
 			var content = element.attr("placeholder");

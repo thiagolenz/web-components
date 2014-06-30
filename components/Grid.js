@@ -1,4 +1,5 @@
-define(["components/GridPagination"],function (gridPagination) {
+define(["components/GridPagination"],
+function (gridPagination) {
 	var config = null;
 		
 	function create (_config) {
@@ -32,6 +33,10 @@ define(["components/GridPagination"],function (gridPagination) {
 		$(th).html(column.label);
 		return th;
 	} 
+	
+	function resetPagination () {
+		gridPagination.resetPagination(config.placeAt);
+	}
 	
 	function fill (result) {
 		var data = result.dataList;
@@ -115,7 +120,7 @@ define(["components/GridPagination"],function (gridPagination) {
 	
 	function getSearchHeaders () {
 		return {
-			"bd-pagination-currentpage": gridPagination.currentPage,
+			"bd-pagination-currentpage": gridPagination.getCurrentPage(config.placeAt),
 			"bd-pagination-recordsrange": config.recordsRange ? config.recordsRange : 10
 		};
 	}
@@ -124,6 +129,7 @@ define(["components/GridPagination"],function (gridPagination) {
 		create : create,
 		fill : fill,
 		clear : clear,
-		getSearchHeaders: getSearchHeaders
+		getSearchHeaders: getSearchHeaders,
+		resetPagination : resetPagination
 	};
 });

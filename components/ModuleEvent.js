@@ -1,14 +1,15 @@
-define (["components/BDomunModulesMapping"], function (bdomunMapping){
+define (["controllers/mapping/ModulesMapping"], 
+function (modulesMapping){
 	
 	function loadModule (moduleId, args) {
 		console.log("loading: "+ moduleId);
 		
-		if ( bdomunMapping[moduleId] == undefined) {
+		if ( modulesMapping[moduleId] == undefined) {
 			console.error ("module not found : "+ moduleId);
 			return;
 		}
 		
-		var moduleConfig = bdomunMapping[moduleId];
+		var moduleConfig = modulesMapping[moduleId];
 		requireAndLoadModule(moduleConfig, moduleId, args);
 	}
 	
@@ -30,9 +31,7 @@ define (["components/BDomunModulesMapping"], function (bdomunMapping){
 	
 	function saveModuleCookie (moduleId) {
 		var expiry = new Date(new Date().getTime()  + (30 * 24 * 60 * 60 * 1000));
-		var expires = "; expires=" + expiry.toGMTString();
-		var cookieConfig = "currentModule=" +moduleId + expires+ "; path=/";
-		document.cookie=cookieConfig;
+		Cookie.saveCookie ("currentModule", moduleId, expiry);
 	}
 	
 	return {

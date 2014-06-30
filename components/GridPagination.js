@@ -1,7 +1,5 @@
 define(function () {
 
-	var currentPage = 0;
-
 	function createPagination (config) {
 		var pagination = createGroupPagination(config.container);
 		createItemPagination(config, pagination);
@@ -23,7 +21,7 @@ define(function () {
 		var numberPages = config.totalRows / config.rowPerPage;
 		for (var i = 0 ; i < numberPages ; i++) {
 			var row = document.createElement("li");
-			if (i == _this.currentPage) {
+			if (i == _this.getCurrentPage(config.container)) {
 				$(row).addClass("active");
 			}
 			var link = document.createElement("a");
@@ -32,7 +30,8 @@ define(function () {
 
 			$(link).addClass("pagination-item");
 			$(link).click(function (event) {
-				_this.currentPage = $(event.target).text() - 1;
+				var page =  $(event.target).text() - 1;
+				setCurrentPage(config, page);
 				config.onPageChange();
 			});
 
@@ -40,10 +39,25 @@ define(function () {
 			$(pagination).append(row);
 		}
 	}
+	
+	function setCurrentPage (config, page) {
+		$($("#"+config.container)).attr("data-currentpage", page);
+	}
+	
+	function getCurrentPage (container) {
+		var page = $($("#"+container)).attr("data-currentpage");
+		page = page ? page : 0;
+		return page;
+	}
+	
+	function resetPagination (container) {
+		$("#"+container).attr("data-currentpage", 0);
+	}
 
 	var _this = {
 			createPagination: createPagination,
-			currentPage : currentPage
+			getCurrentPage : getCurrentPage,
+			resetPagination : resetPagination
 	};
 
 	return _this;

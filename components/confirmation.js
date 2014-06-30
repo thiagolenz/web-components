@@ -1,4 +1,4 @@
-define (["htmlLoader"], function (htmlLoader) {
+define (["components/HtmlLoader"], function (htmlLoader) {
 	var config = null;
 	
 	function showYesNo (_config) {

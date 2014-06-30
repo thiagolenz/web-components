@@ -1,31 +1,63 @@
+var Language = {
+		getLanguage : function () {
+			var cookie = Host.getHost() + "_language"; 
+			var lang = Cookie.getCookie(cookie);
+			if (lang)
+				return lang.toLowerCase();
+			else 
+				return navigator.language.toLowerCase();
+		}
+
+};
+
+var Cookie = {
+		getCookie : function (name) {
+			var cookie = {};
+			var ca = document.cookie.split(';');
+			for(var i=0; i<ca.length; i++) {
+				var c = ca[i].trim();
+				var parts = c.split ("=");
+				cookie[parts[0]] = parts[1];
+			}
+			return cookie [name];
+		},
+		saveCookie : function (cookieName, value, expiry) {
+			var expires = "; expires=" + expiry.toGMTString();
+			var cookieConfig = Host.getHost()+ "_"+ cookieName + "=" + value + expires+ "; path=/";
+			document.cookie=cookieConfig;
+		}
+};
+
+var Host = {
+		getHost : function () {
+			var path = document.location.pathname;
+			if (path != "/")
+				path = "_" + path.substring(1, path.length -1).replace(/\-/g,'_');
+			return document.location.hostname +  path;
+		}
+};
+
+
 var requireConfig = {
 		baseUrl: '.',
 		paths: {
 			bootstrap :  'scripts/bootstrap',
 			datePicker : "scripts/bootstrap-datepicker",
-			grid : "components/Grid",
-			dialog : "components/Dialog",
-			service : "components/Service",
-			binding : "components/binding",
-			formatter : "components/formatter",
 			moment : "scripts/moment-with-langs",
-			formDialog : "components/FormDialog",
-			loadingMessages : "components/LoadingMessages",
-			messages : "components/messages",
-			confirmation: "components/confirmation",
-			i18n : "scripts/i18n",
-			htmlLoader: "components/HtmlLoader"
+			i18n : "scripts/i18n"
 		},
-		locale : navigator.language.toLowerCase()
+		locale : Language.getLanguage()
 };
 
 require.config(requireConfig);
-
-
 var parts = document.URL.split("#!");
 var selectedModule = parts[1];
 
-define(["modules/main/ApplicationMain", "bootstrap", "datePicker", ], function(applicationMain) {
-	require(["scripts/locales/bootstrap-datepicker.pt-BR"]);
+define(["modules/main/ApplicationMain", "bootstrap", "datePicker"], function(applicationMain) {
+	require(["scripts/locales/bootstrap-datepicker.pt-BR",
+	         "scripts/jquery.maskedinput.js"
+	]);
 	applicationMain.load(requireConfig, selectedModule);
 });
+
+

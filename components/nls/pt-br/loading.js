@@ -1,4 +1,4 @@
-define({
+define([],{
 	loading: {
 		wait : "Aguarde..."
 	} 

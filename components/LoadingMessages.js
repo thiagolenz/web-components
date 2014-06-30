@@ -1,16 +1,17 @@
-define(["i18n!components/nls/loading", "htmlLoader"], function (i18ns, htmlLoader){
+define(["i18n!components/nls/Loading", 
+        "components/HtmlLoader"], 
+function (i18ns, htmlLoader){
 	
 	function loading (options) {
-		console.log(i18ns.loading);
 		if (!options)
 			options = {};
 		if (options.inModal)
 			insideModalLoading();			
 		else
-			modalLoading();
+			modalLoading(options);
 	}
 	
-	function modalLoading () {
+	function modalLoading (options) {
 		if ($("#loadingContainer").length == 0) {
 			var element = document.createElement("div");
 			element.id = "loadingContainer";
@@ -22,6 +23,9 @@ define(["i18n!components/nls/loading", "htmlLoader"], function (i18ns, htmlLoade
 				container: "#loadingContainer",
 				file: "components/templates/DialogLoading.html",
 				i18n : i18ns
+			}, function () {
+				if (window.loadingProcessCount == 0)
+					hideLoading(options);
 			});
 	}
 	
@@ -49,7 +53,6 @@ define(["i18n!components/nls/loading", "htmlLoader"], function (i18ns, htmlLoade
 		});
 	}
 	
-	
 	function hideLoading (options) {
 		if (!options)
 			options = {};
@@ -65,7 +68,7 @@ define(["i18n!components/nls/loading", "htmlLoader"], function (i18ns, htmlLoade
 	
 	function hideModalLoading () {
 		downProcessLoading();
-		if (window.loadingProcessCount == 0)
+		if (window.loadingProcessCount <= 0)
 			$("#loadingContainer").empty();
 	}
 	
