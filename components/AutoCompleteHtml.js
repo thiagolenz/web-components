@@ -147,6 +147,7 @@ define ([], function () {
 	}
 	
 	function removeCurrentTag (config)  {
+		config.onRemoveTag(config);
 		$("#"+config.container + " .tag").remove();
 	}
 	

@@ -4,8 +4,8 @@ define ([], function () {
 		
 	}
 	
-	function parseData (value, format){
-		
+	function toDate (value){
+		return moment(value, moment.langData()._longDateFormat.L).toDate();
 	}
 	
 	function initializeDatePicker () {
@@ -13,6 +13,10 @@ define ([], function () {
 			autoclose: true,
 			format: moment.langData()._longDateFormat.L.toLowerCase(),
 			language: defineLang()
+		}).on("changeDate", function(event){
+			var tabables = $("input, button, textarea[tabindex != '-1']:visible");
+			var currentIndex = tabables.index(event.target);
+			$(tabables[currentIndex+1]).focus();
 		});
 	}
 	
@@ -22,6 +26,7 @@ define ([], function () {
 	}
 	
 	return {
-		initializeDatePicker : initializeDatePicker
+		initializeDatePicker : initializeDatePicker,
+		toDate : toDate
 	};
 });

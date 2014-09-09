@@ -1,48 +1,54 @@
 define ([], function (){
 	function create (options) {
 		var btnGroup = document.createElement("div");
-		$(btnGroup).addClass ("btn-group");
-		for (var i = 0 ; i< options.data.length; i++) 
-			createCheckboxButton(options.data[i], options, btnGroup);
+		$(btnGroup).addClass ("btn-group"); 
+		
+		createCheckboxButton({label : "Sim", value: "YES"}, btnGroup);
+		createCheckboxButton({label : "Não", value: "NO"}, btnGroup);
+		
+		$("#"+options.container).attr ("data-type", "boolean");
+		
 		$("#"+options.container).append(btnGroup);
+		setValue(options.container, "NO");
 		if (options.onFinishCreate)
 			options.onFinishCreate();
 	}
 	
-	function createCheckboxButton (element, options, btnGroup) {
+	function createCheckboxButton (element, btnGroup) {
 		var button = document.createElement("button");
-		$(button).html(element[options.varname]);
-		$(button).attr ("data-name", element.dataName);
-		$(button).attr ("data-type", "checkbox");
-	
-		if (element.checked)
-			$(button).addClass("btn btn-primary active");
-		else 
-			$(button).addClass("btn btn-default");	
-	
+		$(button).attr ("data-value", element.value);
+		$(button).addClass("btn");
+		$(button).html(element.label);
 		$(button).click (onClick);
 		$(btnGroup).append (button);
 	}
 	
 	function onClick (event) {
-		var clickedBtn = $(event.target);
-		$(clickedBtn).toggleClass("active");
-		$(clickedBtn).toggleClass("btn-primary");
-		$(clickedBtn).toggleClass("btn-default");
+		toggleButton(event.target);
+		toggleButton($(event.target).siblings()[0]);
 	}
 	
-	function getValue (element) {
-		return $(element).hasClass("active");
+	function getValue (container) {
+		return $(container).find("button.active").attr("data-value") == "YES";
 	}
 	
-	function setValue (element, value) {
-		if (value) {
-			$(element).addClass("active btn-primary");
-			$(element).removeClass("btn-default");
+	function setValue (container, value) {
+		var buttons = $("#"+container).find("button");
+		if (value == "NO" || !value) {
+			$(buttons[1]).addClass("btn-primary active");
+			$(buttons[0]).removeClass("btn-primary active");
+			$(buttons[0]).addClass("btn-default");
 		} else {
-			$(element).addClass("active btn-default");
-			$(element).removeClass("active btn-primary");
+			$(buttons[0]).addClass("btn-primary active");
+			$(buttons[1]).removeClass("btn-primary active");
+			$(buttons[1]).addClass("btn-default");
 		}
+	}
+
+	function toggleButton (button) {
+		$(button).toggleClass("active");
+		$(button).toggleClass("btn-primary");
+		$(button).toggleClass("btn-default");
 	}
  	
 	return {

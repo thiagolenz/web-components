@@ -44,7 +44,9 @@ var requireConfig = {
 			bootstrap :  'scripts/bootstrap',
 			datePicker : "scripts/bootstrap-datepicker",
 			moment : "scripts/moment-with-langs",
-			i18n : "scripts/i18n"
+			i18n : "scripts/i18n",
+			treeGridJs : "scripts/jquery.treegrid",
+			numeral : "scripts/numeral.min"
 		},
 		locale : Language.getLanguage()
 };
@@ -53,9 +55,15 @@ require.config(requireConfig);
 var parts = document.URL.split("#!");
 var selectedModule = parts[1];
 
-define(["modules/main/ApplicationMain", "bootstrap", "datePicker"], function(applicationMain) {
+define(["modules/main/ApplicationMain", 
+        "bootstrap", 
+        "datePicker", 
+        "treeGridJs"], function(applicationMain) {
 	require(["scripts/locales/bootstrap-datepicker.pt-BR",
-	         "scripts/jquery.maskedinput.js"
+	         "scripts/jquery.maskedinput",
+	         "scripts/jquery.treegrid.bootstrap3",
+	         "scripts/jquery.maskMoney.min",
+	         "scripts/languages.min"
 	]);
 	applicationMain.load(requireConfig, selectedModule);
 });

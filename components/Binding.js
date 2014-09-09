@@ -2,8 +2,9 @@ define(["components/Formatter",
         "moment", 
         "components/CheckboxButton",
         "components/Mask", 
-        "components/AutoComplete"], 
-function (formatter, moment, checkboxButton, mask, autoComplete){
+        "components/AutoComplete",
+        "components/MonetaryInput"], 
+function (formatter, moment, checkboxButton, mask, autoComplete, monetaryInput){
 	
 	function copyBeanToForm (source, bean) {
 		copyFieldsToForm(source, bean);
@@ -24,12 +25,14 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 		else if (type === "Integer")
 			$(element).val(value);
 		else if (type === "Date") {
-			var date = moment(account.registerDate).format('L');
+			var date = moment(value).format('L');
 			$(element).datepicker('update', date);
 		} else if (type == "masked") {
 			var mask = $(element).attr("data-mask");
 			$(element).val(value).mask(mask);
-		} 
+		}  else if (type == "Monetary") {
+			monetaryInput.setValue (element, value);
+		}
 	}
 	
 	function copyFieldsExtendsToForm (source, bean) {
@@ -45,6 +48,8 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 			checkboxButton.setValue(element, value);
 		else if (type == "AutoComplete")
 			autoComplete.setValue($(element).attr("data-name"), value);
+		else if (type == "boolean")
+			checkboxButton.setValue(element.id, value);
 	}
 	
 	function copy (source, destiny) {
@@ -61,7 +66,7 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 		var mapAttFields = mapAttributesFields(source);
 		for (var i in mapAttFields) {
 			var obj = mapAttFields[i];
-			destiny[obj.attribute] = parseData (obj.element.value, obj.type);
+			destiny[obj.attribute] = parseData (obj.element.value, obj.type, obj.element);
 		}
 	}
 	
@@ -103,7 +108,7 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 		return array;
 	}
 	
-	function parseData (value, type) {
+	function parseData (value, type, element) {
 		if (!type || type === "String" || !value)
 			return value;
 		else if (type === "Integer")
@@ -112,6 +117,8 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 			return  moment(value, moment.langData()._longDateFormat.L).toDate();
 		else if (type === "masked") 
 			return mask.getValueWithoutMask(value);
+		else if (type == "Monetary")
+			return monetaryInput.getValue(element);
 		return value;
 	}
 	
@@ -120,6 +127,8 @@ function (formatter, moment, checkboxButton, mask, autoComplete){
 			return checkboxButton.getValue(element);
 		else if (type == "AutoComplete")
 			return autoComplete.getValue($(element).attr("data-name"));
+		else if (type == "boolean")
+			return checkboxButton.getValue(element);
 		return undefined;
 	}
 	

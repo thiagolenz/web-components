@@ -10,6 +10,10 @@ define (["components/AutoCompleteHtml",
 	var configs = {};
 	
 	function create (config) {
+		config.onRemoveTag = function (config) {
+			setValue(getDataName(config), undefined);
+		};
+		
 		autoCompleteHtml.createAutoCompleteComponent(config);
 		bindEvents(config);
 		configs [$("#"+config.container).attr("data-name")] = config;
@@ -101,9 +105,13 @@ define (["components/AutoCompleteHtml",
 		if (config.onChange)
 			config.onChange (obj);
 
-		selectedBeans [$("#"+ config.container).attr("data-name")] = obj;
+		selectedBeans [getDataName(config)] = obj;
 		
 		findNextElementToFocus(config);
+	}
+	
+	function getDataName (config) {
+		return $("#"+ config.container).attr("data-name");
 	}
 	
 	function findNextElementToFocus (config) {	
